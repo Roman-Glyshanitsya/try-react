@@ -2,6 +2,7 @@ import { Component } from "react";
 import { Controls } from './Controls';
 import { Progress } from './Progress';
 import { Publications } from './Publication';
+import { Container } from "./Reader.styled";
 
 export class Reader extends Component {
     state = {
@@ -26,7 +27,7 @@ export class Reader extends Component {
         const currentItem = this.props.items[index];
         const totalItems = this.props.items.length;
         return (
-            <div>
+            <Container>
                 <Controls
                     onChange={this.changeIndex}
                     current={index + 1}
@@ -35,7 +36,7 @@ export class Reader extends Component {
                 <Progress total={ totalItems } curent={ index + 1 } />
                 <Publications item={currentItem} />
 
-            </div>
+            </Container>
         );
 }
 }
