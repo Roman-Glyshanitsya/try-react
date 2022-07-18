@@ -1,42 +1,46 @@
-import { Component } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Controls } from './Controls';
 import { Progress } from './Progress';
 import { Publications } from './Publication';
 import { Container } from "./Reader.styled";
 
-export class Reader extends Component {
-    state = {
-        index: 0,
+const LS_KEY = 'reader_item_index';
+
+export const Reader = ({ items }) => {
+    const isMounted = useRef(false);
+    const [index, setIndex] = useState(0);
+
+    const changeIndex = value => {
+        setIndex(prevIndex => prevIndex + value);
     };
 
-    changeIndex = value => {
-        this.setState(state => ({index: state.index + value}))
-    }
+    useEffect(() => {
+        const savedState = localStorage.getItem(LS_KEY);
+        if (savedState) {
+            setIndex(Number(savedState));
+        }
+    }, []);
+    
+    useEffect(() => {
+        if (isMounted.current) {
+            localStorage.setItem(LS_KEY, index);
+        }
+        isMounted.current = true;
+    }, [index]);
+    
+    const totalItems = items.length;
+    const currentItem = items[index];
 
-    // onPrev = () => {
-    //     this.setState(state => ({ index: state.index - 1 }));
-    // };
-
-    // onNext = () => {
-    //     this.setState(state => ({ index: state.index + 1 }));
-    // };
-
-    render() {
-        // console.log(this.props.items[this.state.index]);
-        const { index } = this.state;
-        const currentItem = this.props.items[index];
-        const totalItems = this.props.items.length;
         return (
             <Container>
                 <Controls
-                    onChange={this.changeIndex}
-                    current={index + 1}
+                    onChange={changeIndex}
                     total={totalItems}
+                    current={index + 1}
                 />
                 <Progress total={ totalItems } curent={ index + 1 } />
                 <Publications item={currentItem} />
-
             </Container>
         );
-}
+
 }
